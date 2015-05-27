@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FTP Converter</title>
+<style>
+	#wrapper{
+	width:1200px;
+		margin:0px auto;
+	//	border: 1px solid gray;
+		padding:20px;
+		
+	}
+	section{
+		//width:40%;
+		display:inline-block;
+	//	border: 1px solid gray;
+		margin-right:10px;
+		text-align:center;
+		vertical-align:top;
+	}
+</style>
+</head>
+<body>
+	<div id="wrapper">
+		<section>
+			<h3>INPUT</h3>
+			<textarea id="input" rows="10" cols="80" placeholder="10C1	100nF	C0402	22.47	69.26	90	TOP"></textarea><br>
+			<button onclick="MyCon()">convert</button>
+		</section>
+		<section>
+			<h3>OUTPUT</h3>
+			<textarea id="output" rows="10" cols="80"></textarea>	
+		</section>
+	</div>
+	<script>
+		function MyCon(){
+			
+			var text = document.getElementById('input').value.trim();
+			var lines = text.split('\n');
+			var output="";
+			var lineNum = 1;
+			
+			//1-4C24_10pF/0402=("10pF/0402","C0402",,,1.791368,0.673228,90,TOP)
+			
+			for(var i=0; i < lines.length; i++){
+				var currLine = lines[i].trim();
+				var elements = currLine.split('\t');
+				//10C1	100nF	C0402	22.47	69.26	90	TOP
+				//  0    1       2       3        4      5   6     
+				
+				var buildOut ="";
+				var res = '';
+				if(currLine!=""){
+					if(elements[2].indexOf("C")||elements[2].indexOf("R")){
+						var res = '/'+elements[2].substr(1, 4);
+					}
+					buildOut+=lineNum;
+					buildOut+='-';
+					buildOut+=elements[0];
+					buildOut+='_';
+					buildOut+=elements[1];
+					buildOut+=res;
+					buildOut+='=("';
+					buildOut+=elements[1];
+					buildOut+=res;
+					buildOut+='","';
+					buildOut+=elements[2];
+					buildOut+='",,,';
+					buildOut+=elements[3];
+					buildOut+=',';
+					buildOut+=elements[4];
+					buildOut+=',';
+					buildOut+=elements[5]
+					buildOut+=',TOP)'
+					buildOut+='\n';
+					output+=buildOut;
+					lineNum++;
+				}
+				
+			}
+			document.getElementById('output').innerHTML = output;
+			//document.getElementById('output').setAttribute("rows",lines.length );
+		}
+	</script>
+</body>
+</html>
